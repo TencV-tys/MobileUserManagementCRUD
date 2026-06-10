@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { type RootStack } from "../navigator/Navigator";
 import { View, TouchableOpacity, Text, Alert, StyleSheet, FlatList } from 'react-native'
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -31,14 +31,79 @@ const HomeScreen = () => {
     }
   }
 
+  const handleDelete = (userId: number, userName: string): void => {
+    Alert.alert("DeleteUser",
+      `Delete ${userName}`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await UserDatabase.deleteUser(userId)
+            loadUsers()
+          }
+        }
+      ]
+    )
+
+  }
+
+  const renderUser = ({ item }: { item: User }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('UserDetails', { userId: item.id })}
+      >
+        <View>
+          <Text>Name:{item.name}</Text>
+          <Text>Email:{item.email}</Text>
+          <Text>Age:{item.age}</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => handleDelete(item.id, item.name)}
+        >
+          <Text>Delete</Text>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    )
+  }
 
 
   return (
-    <View>
-      <Text>Home Screen</Text>
+    <View style={s.container}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('AddUser')}
+      >
+        <Text>Add User</Text>
+      </TouchableOpacity>
+
+      {
+        loading ? (<Text>Loading...</Text>) :
+          users.length === 0 ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('AddUser')}
+            >
+              <Text>Add user first</Text>
+            </TouchableOpacity>) :
+            (
+              <FlatList
+                data={users}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={renderUser}
+              />
+            )
+      }
+
+
     </View>
 
   )
 }
+
+const s = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+})
 
 export default HomeScreen
