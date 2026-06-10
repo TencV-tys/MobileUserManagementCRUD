@@ -4,7 +4,15 @@ import EditScreen from '../screens/EditUserScreen'
 import AddScreen from '../screens/AddUserScreen'
 import UserDetailsScreen from '../screens/UserDetailsScreen'
 
-const St = createNativeStackNavigator()
+export type RootStack = {
+  Home: undefined;
+  AddUser: undefined;
+  EditUser: { userId: number };
+  UserDetails: { userId: number };
+
+}
+
+const St = createNativeStackNavigator<RootStack>()
 
 const Navigator = () => {
   return (

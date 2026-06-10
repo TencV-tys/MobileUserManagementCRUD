@@ -12,6 +12,7 @@ export interface User {
 
 class UserDatabase {
   private db: Lite.SQLiteDatabase
+  private Init: boolean = false
   constructor() {
     this.db = Lite.openDatabaseSync('users.db')
   }
@@ -29,11 +30,17 @@ class UserDatabase {
 `)
 
       console.log('Table created successfully')
+      this.Init = true
       return true
     } catch (e) {
       console.error('Error creating table', e)
+      this.Init = false
       return false
     }
+  }
+
+  isReady(): boolean {
+    return this.Init
   }
 
   async addUser(name: string, email: string, age: number): Promise<number> {
