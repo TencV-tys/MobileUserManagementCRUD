@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+
+
+import { NavigationContainer } from '@react-navigation/native'
+import Navigator from './src/navigator/Navigator';
+import UserDatabase from './src/database/userData'
+import { useEffect } from 'react';
+
 
 export default function App() {
+
+  useEffect(() => {
+    initializedDatabase()
+  }, [])
+
+  const initializedDatabase = async (): Promise<void> => {
+    try {
+      const success = await UserDatabase.createTable()
+
+      if (success) console.log('Database initialized successfully')
+      else console.log('Failed initializing')
+
+
+    } catch (e) {
+      console.error('Error Database Initializing', e)
+    }
+
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Navigator />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
