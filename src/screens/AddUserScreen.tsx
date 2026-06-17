@@ -16,15 +16,15 @@ const AddUserScreen = () => {
 
   const handleAddUser = async (): Promise<void> => {
 
-    if (!name?.trim()) {
+    if (!name.trim()) {
       Alert.alert('Error', 'Please enter name')
       return
     }
-    if (!email?.trim()) {
+    if (!email.trim()) {
       Alert.alert('Error', 'Please enter email')
       return
     }
-    if (!age?.trim()) {
+    if (!age.trim()) {
       Alert.alert('Error', 'Please enter age')
       return
     }
@@ -52,59 +52,107 @@ const AddUserScreen = () => {
     } finally {
       setLoading(false)
     }
-
-
   }
 
-  const AddForm = () => {
-    return (
-      <View style={s.formContainer}>
-        <Text> Add New User</Text>
+  // ✅ Move AddForm logic directly in return, not as separate function
+  return (
+    <View style={s.formContainer}>
+      <Text style={s.title}>Add New User</Text>
 
-        <TextInput
-          placeholder="Enter name"
-          value={name}
-          onChangeText={setName}
-        />
-        <TextInput
-          placeholder="Enter email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        /> <TextInput
-          placeholder="Enter age"
-          value={age}
-          onChangeText={setAge}
-        />
+      <TextInput
+        style={s.input}
+        placeholder="Enter name"
+        value={name}
+        onChangeText={setName}
+      />
+      
+      <TextInput
+        style={s.input}
+        placeholder="Enter email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      
+      <TextInput
+        style={s.input}
+        placeholder="Enter age"
+        value={age}
+        onChangeText={setAge}
+        keyboardType="numeric"
+      />
 
-        <TouchableOpacity onPress={() => nav.goBack()}>
-          <Text>Cancel</Text>
+      <View style={s.buttonContainer}>
+        <TouchableOpacity 
+          style={[s.button, s.cancelButton]} 
+          onPress={() => nav.goBack()}
+        >
+          <Text style={s.buttonText}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleAddUser}
-          disabled={loading}>
-
-          <Text>
-            {
-              loading ? 'Adding...' : 'Add User'
-            }
+        
+        <TouchableOpacity 
+          style={[s.button, s.addButton, loading && s.disabledButton]} 
+          onPress={handleAddUser}
+          disabled={loading}
+        >
+          <Text style={s.buttonText}>
+            {loading ? 'Adding...' : 'Add User'}
           </Text>
         </TouchableOpacity>
       </View>
-    )
-  }
-
-
-  return (
-    <AddForm />
+    </View>
   )
 }
 
 const s = StyleSheet.create({
   formContainer: {
-    flex: 1
-  }
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    textAlign: 'center',
+    color: '#333',
+  },
+  input: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  addButton: {
+    backgroundColor: '#007AFF',
+  },
+  cancelButton: {
+    backgroundColor: '#FF3B30',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
 })
 
 export default AddUserScreen
-

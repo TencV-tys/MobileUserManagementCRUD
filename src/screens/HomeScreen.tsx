@@ -40,8 +40,13 @@ const HomeScreen = () => {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
+            try{
             await UserDatabase.deleteUser(userId)
             loadUsers()
+            }catch(e){
+              console.error('Error deleting')
+              Alert.alert('Error','Error Deleting')
+            }
           }
         }
       ]
@@ -52,17 +57,19 @@ const HomeScreen = () => {
   const renderUser = ({ item }: { item: User }) => {
     return (
       <TouchableOpacity
+        style={s.detailContainer}
         onPress={() => navigation.navigate('UserDetails', { userId: item.id })}
       >
-        <View>
-          <Text>Name:{item.name}</Text>
-          <Text>Email:{item.email}</Text>
-          <Text>Age:{item.age}</Text>
+        <View style={s.detailHolder}>
+          <Text style={s.detailText}>Name:{item.name}</Text>
+          <Text style={s.detailText}>Email:{item.email}</Text>
+          <Text style={s.detailText}>Age:{item.age}</Text>
         </View>
         <TouchableOpacity
+          style={s.deleteButton}
           onPress={() => handleDelete(item.id, item.name)}
         >
-          <Text>Delete</Text>
+          <Text style={s.deleteText}>Delete</Text>
         </TouchableOpacity>
       </TouchableOpacity>
     )
@@ -71,38 +78,117 @@ const HomeScreen = () => {
 
   return (
     <View style={s.container}>
+      {
+      users.length > 0 && (
+      <View style={s.addContainer}>
       <TouchableOpacity
+        style={s.addButton}
         onPress={() => navigation.navigate('AddUser')}
       >
-        <Text>Add User</Text>
+        <Text style={s.addText}>Add User</Text>
       </TouchableOpacity>
-
+      </View>
+       )
+        }
       {
-        loading ? (<Text>Loading...</Text>) :
+        loading ? (
+        <View style={s.loadingContainer}>
+          <Text style={s.loadingText}>Loading...</Text>
+        </View>
+        ) :
           users.length === 0 ? (
+            <View style={s.addFirstContainer}>
             <TouchableOpacity
+              style={s.addFirst}
               onPress={() => navigation.navigate('AddUser')}
             >
-              <Text>Add user first</Text>
-            </TouchableOpacity>) :
+              <Text style={s.addFirstText}>Add user first</Text>
+            </TouchableOpacity> 
+            </View>
+            ) :
             (
               <FlatList
                 data={users}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderUser}
               />
-            )
-      }
-
-
-    </View>
-
+            )}
+        </View>
   )
 }
 
 const s = StyleSheet.create({
   container: {
     flex: 1
+  },
+  addButton:{
+    alignItems:'center',
+    padding:10,
+    backgroundColor:'blue',
+    borderRadius:10,
+    width:'50%'
+  },
+  addContainer:{
+      width:'100%',
+      alignItems:'center',
+      paddingVertical:10
+  },
+  addText:{
+    fontSize:14,
+    color:'white',
+
+  },
+  detailContainer:{
+    paddingHorizontal:20,
+    paddingVertical:10,
+    borderWidth:1,
+    marginVertical:10,
+    marginHorizontal:8
+  },
+  detailHolder:{
+    padding:3,
+    justifyContent:'space-around',
+  },
+  detailText:{
+    fontWeight:'500',
+    fontStyle:'italic'
+  },
+  deleteButton:{
+    margin:5,
+    alignItems:'center',
+    paddingVertical:10,
+    paddingHorizontal:10,
+    backgroundColor:'red',
+    borderRadius:10
+  },
+  deleteText:{
+    color:'white',
+    fontWeight:'500'
+  },
+  loadingContainer:{
+    alignItems:'center',
+    flex:1,
+    justifyContent:'center',
+
+  },
+  loadingText:{
+    fontWeight:'500',
+    fontSize:18
+  },
+  addFirstContainer:{
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  addFirst:{
+    backgroundColor:'blue',
+    padding:12,
+    borderRadius:10
+  },
+  addFirstText:{
+    fontSize:18,
+    fontWeight:'500',
+    color:'white'
   }
 })
 
